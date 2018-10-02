@@ -1,7 +1,8 @@
-cython
 Flask
 gunicorn
 flask_restful
+Cython
+# Must be installed after Cython IN A SEPARATE STEP!
 pyjnius
 # For the clients
 requests

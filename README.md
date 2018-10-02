@@ -6,9 +6,9 @@ A wrapper and REST API implemented in Python for ___emDep__ (Bohnet parser a.k.a
   
   - (Included in this repository) [Mate Tools parser](http://www.ims.uni-stuttgart.de/forschung/ressourcen/werkzeuge/matetools.en.html) compiled (stripped from [Magyarlánc 3.0](https://github.com/antaljanosbenjamin/magyarlanc/tree/b558823b2d1f9cdc0b5c0ad93b628e96fe251cc1))
   - (Included in this repository) Modelfile for the parser (stripped from [e-magyar](https://github.com/dlt-rilmta/hunlp-GATE/tree/7a75b470753da7e655796c0b1bcaa97e8e143540))
-  - _Java JDK and Cython as in Aptfile (for building dependencies)
+  - Java JDK and Cython as in Aptfile (for building dependencies)
   - Python 3 (tested with 3.6)
-  - Pip to install the additional requirements in requirements.txt
+  - Pip to install the additional requirements in requirements.txt (MUST BE DONE IN TWO STEPS!)
   - (Optional) a cloud service like [Heroku](https://heroku.com) for hosting the API
 
 ## Install on local machine
