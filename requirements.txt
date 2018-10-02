@@ -1,0 +1,7 @@
+cython
+Flask
+gunicorn
+flask_restful
+pyjnius
+# For the clients
+requests
