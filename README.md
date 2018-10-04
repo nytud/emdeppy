@@ -13,8 +13,10 @@ A wrapper and REST API implemented in Python for ___emDep__ (Bohnet parser a.k.a
 
 ## Install on local machine
 
+  - Install [`git-lfs`](https://git-lfs.github.com/)
   - Clone the repository
   - sudo apt install `cat Aptfile`
+  - Run: `sudo pip3 install Cython`
   - Run: `sudo pip3 install -r requirements.txt`
   - Use from Python
 
@@ -27,7 +29,7 @@ A wrapper and REST API implemented in Python for ___emDep__ (Bohnet parser a.k.a
   - Clone the repository
   - Add Heroku as remote origin
   - Add buildpacks (in the specified order!)
-  - Push the repository to Heroku
+  - Push the repository to Heroku (Beware git-lfs, and pip Cython install!)
   - Enjoy!
 
 ## Usage
