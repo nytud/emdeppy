@@ -38,7 +38,7 @@ A wrapper and REST API implemented in Python for ___emDep__ (Bohnet parser a.k.a
 
 	```python
 	>>> import emdeppy.emdeppy as emdep
-	>>> p = emdeph.EmDepPy('szk.mate.model')
+	>>> p = emdep.EmDepPy('szk.mate.model')
 	>>> ex = 'A a Det SubPOS=f\n' \
              'kutya kutya N SubPOS=c|Num=s|Cas=n|NumP=none|PerP=none|NumPd=none\n' \
              'elment elmegy V SubPOS=m|Mood=i|Tense=s|Per=3|Num=s|Def=n\n' \
