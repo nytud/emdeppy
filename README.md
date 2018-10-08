@@ -1,23 +1,25 @@
 
 # emDepPy
-A wrapper and REST API implemented in Python for ___emDep__ (Bohnet parser a.k.a. Mate Tools)_
+A wrapper and REST API implemented in Python for __emDep__ (Bohnet parser a.k.a. Mate Tools).
 
 ## Requirements
-  
-  - (Included in this repository) [Mate Tools parser](http://www.ims.uni-stuttgart.de/forschung/ressourcen/werkzeuge/matetools.en.html) compiled (stripped from [Magyarlánc 3.0](https://github.com/antaljanosbenjamin/magyarlanc/tree/b558823b2d1f9cdc0b5c0ad93b628e96fe251cc1))
-  - (Included in this repository) Modelfile for the parser (stripped from [e-magyar](https://github.com/dlt-rilmta/hunlp-GATE/tree/7a75b470753da7e655796c0b1bcaa97e8e143540))
+
+  - _(Included in this repository)_ [Mate Tools parser](http://www.ims.uni-stuttgart.de/forschung/ressourcen/werkzeuge/matetools.en.html) compiled (stripped from [Magyarlánc 3.0](https://github.com/antaljanosbenjamin/magyarlanc/tree/b558823b2d1f9cdc0b5c0ad93b628e96fe251cc1))
+  - _(Included in this repository)_ Modelfile for the parser (stripped from [e-magyar](https://github.com/dlt-rilmta/hunlp-GATE/tree/7a75b470753da7e655796c0b1bcaa97e8e143540))
   - Java JDK and Cython as in Aptfile (for building dependencies)
   - Python 3 (tested with 3.6)
-  - Pip to install the additional requirements in requirements.txt (MUST BE DONE IN TWO STEPS!)
-  - (Optional) a cloud service like [Heroku](https://heroku.com) for hosting the API
+  - Pip to install the additional requirements in requirements.txt
+(MUST BE DONE IN TWO STEPS! -- as written in 'Install on local machine')
+  - _(Optional)_ a cloud service like [Heroku](https://heroku.com) for hosting the API
 
 ## Install on local machine
 
-  - Install [`git-lfs`](https://git-lfs.github.com/)
-  - Clone the repository
-  - sudo apt install `cat Aptfile`
-  - Run: `sudo pip3 install Cython`
-  - Run: `sudo pip3 install -r requirements.txt`
+  - Install [git-lfs](https://git-lfs.github.com/)
+  - `git-lfs install` 
+  - Clone the repository: `git clone https://github.com/dlt-rilmta/emdeppy`
+  - ``sudo apt install `cat Aptfile` ``
+  - `sudo pip3 install Cython`
+  - `sudo pip3 install -r requirements.txt`
   - Use from Python
 
 ## Install to Heroku
@@ -44,11 +46,22 @@ A wrapper and REST API implemented in Python for ___emDep__ (Bohnet parser a.k.a
              'elment elmegy V SubPOS=m|Mood=i|Tense=s|Per=3|Num=s|Def=n\n' \
              'sétálni sétál V SubPOS=m|Mood=i|Tense=s|Per=none|Num=p|Def=n\n' \
              '. . . _'
-	>>> p.parse_sentence(ex)  # Returns an iterator by tokens (id, token, lemma, pos, features, heads, labels)
+	>>> sentence = ex.split('\n')
+	>>> print(list(p.parse_sentence(sentence)))
 	...
 	>>> p.parse_stream(ex)  # Same as parse_sentence, but sentences are separated with empty lines
 	...
 	```
+
+	`szk.mate.model` is the Szeged Korpusz model file.
+
+	`parse_sentence` takes one sentence as a list of tokens,
+a token is a wsp-separated list of 4 fields:
+string, lemma, pos, feature.
+It returns an iterator by tokens with 7 fields:
+id, string, lemma, pos, feature, depTarget, depType.
+
+	`parse_stream` XXX explanation (... can take several sentences)
 
 - Through the REST API:
 	```python
@@ -57,6 +70,8 @@ A wrapper and REST API implemented in Python for ___emDep__ (Bohnet parser a.k.a
 	>>> print(r.text)
 	...
 	```
+
+	XXX how to start the service?
 
 - See test instance on heroku: https://emdeppy.herokuapp.com/
 
