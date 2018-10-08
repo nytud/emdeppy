@@ -18,31 +18,31 @@ os.environ['CLASSPATH'] = os.path.join(curr_dir, 'anna-3.61.jar')
 # Set path and import jnius for this session
 from jnius import autoclass
 
-jstr = autoclass('java.lang.String')
 
 class EmDepPy:
     def __init__(self, model_file='szk.mate.model'):
+        self._jstr = autoclass('java.lang.String')
         if not os.path.isabs(model_file):
             model_file = os.path.normpath(os.path.join(curr_dir, model_file))
-        self._parser = autoclass('is2.parser.Parser')(jstr(model_file.encode('UTF-8')))
+        self._parser = autoclass('is2.parser.Parser')(self._jstr(model_file.encode('UTF-8')))
 
     def parse_sentence(self, lines):
         # Create a sentence class
         sentence_data = autoclass('is2.data.SentenceData09')()
 
         # Init Arrays for the text
-        forms = [jstr(b'<root>')]
-        lemmas = [jstr(b'<root-LEMMA>')]
-        poss = [jstr(b'<root-POS>')]
-        features = [jstr(b'<no-type>')]
+        forms = [self._jstr(b'<root>')]
+        lemmas = [self._jstr(b'<root-LEMMA>')]
+        poss = [self._jstr(b'<root-POS>')]
+        features = [self._jstr(b'<no-type>')]
 
         # Read the text from TSV style input
         for line in lines:
             curr_form, curr_lemma, curr_pos, curr_feats = line.strip().split()
-            forms.append(jstr(curr_form.encode('UTF-8')))
-            lemmas.append(jstr(curr_lemma.encode('UTF-8')))
-            poss.append(jstr(curr_pos.encode('UTF-8')))
-            features.append(jstr(curr_feats.encode('UTF-8')))
+            forms.append(self._jstr(curr_form.encode('UTF-8')))
+            lemmas.append(self._jstr(curr_lemma.encode('UTF-8')))
+            poss.append(self._jstr(curr_pos.encode('UTF-8')))
+            features.append(self._jstr(curr_feats.encode('UTF-8')))
 
         # Init sentence class
         sentence_data.init(forms)
