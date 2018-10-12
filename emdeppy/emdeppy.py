@@ -25,6 +25,18 @@ class EmDepPy:
         if not os.path.isabs(model_file):
             model_file = os.path.normpath(os.path.join(curr_dir, model_file))
         self._parser = autoclass('is2.parser.Parser')(self._jstr(model_file.encode('UTF-8')))
+        self.target_fields = ['deptype', 'deptarget']
+
+    def process_sentence(self, sen, field_names):
+        out = self.parse_sentence('\t'.join((tok[field_names[0]], tok[field_names[1]], tok[field_names[2]],
+                                             tok[field_names[3]])) for tok in sen)
+        for tok, out_line in zip(sen, out):
+            tok.extend([str(out_line[0]), out_line[6], str(out_line[5])])
+        return sen
+
+    @staticmethod
+    def prepare_fields(field_names):
+        return [field_names['string'], field_names['lemma'], field_names['pos'], field_names['feature']]
 
     def parse_sentence(self, lines):
         # Create a sentence class
