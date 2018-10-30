@@ -4,27 +4,51 @@
 import os
 from itertools import count
 
-# Set JAVA_HOME for this session
-try:
-    os.environ['JAVA_HOME']
-except KeyError:
-    os.environ['JAVA_HOME'] = '/usr/lib/jvm/java-8-openjdk-amd64/'
 
-# Set path for PurePOS for this session
-curr_dir = os.path.dirname(__file__)
+def import_pyjnius(class_path):
+    """
+    PyJNIus can only be imported once per Python interpreter and one must set the classpath before importing...
+    """
+    # Check if autoclass is already imported...
+    if 'autoclass' not in locals() and 'autoclass' not in globals():
 
-os.environ['CLASSPATH'] = os.path.join(curr_dir, 'anna-3.61.jar')
+        # Tested on Ubuntu 16.04 64bit with openjdk-8 JDK and JRE installed:
+        # sudo apt install openjdk-8-jdk-headless openjdk-8-jre-headless
 
-# Set path and import jnius for this session
-from jnius import autoclass
+        # Set JAVA_HOME for this session
+        try:
+            os.environ['JAVA_HOME']
+        except KeyError:
+            os.environ['JAVA_HOME'] = '/usr/lib/jvm/java-8-openjdk-amd64/'
+
+        os.environ['CLASSPATH'] = ':'.join((class_path, os.environ.get('CLASSPATH', ''))).rstrip(':')
+
+        # Set path and import jnius for this session
+        from jnius import autoclass
+    else:
+        import sys
+        from jnius import cast, autoclass  # Dummy autoclass import to silence the IDE
+        class_loader = autoclass('java.lang.ClassLoader')
+        cl = class_loader.getSystemClassLoader()
+        ucl = cast('java.net.URLClassLoader', cl)
+        urls = ucl.getURLs()
+        cp = ':'.join(url.getFile() for url in urls)
+
+        print('Warning: PyJNIus is already imported with the following classpath: {0}'.format(cp), file=sys.stderr)
+
+    # Return autoclass for later use...
+    return autoclass
 
 
 class EmDepPy:
+    class_path = os.path.join(os.path.dirname(__file__), 'anna-3.61.jar')
+
     def __init__(self, model_file='szk.mate.model'):
-        self._jstr = autoclass('java.lang.String')
+        self._autoclass = import_pyjnius(EmDepPy.class_path)
+        self._jstr = self._autoclass('java.lang.String')
         if not os.path.isabs(model_file):
-            model_file = os.path.normpath(os.path.join(curr_dir, model_file))
-        self._parser = autoclass('is2.parser.Parser')(self._jstr(model_file.encode('UTF-8')))
+            model_file = os.path.normpath(os.path.join(os.path.dirname(__file__), model_file))
+        self._parser = self._autoclass('is2.parser.Parser')(self._jstr(model_file.encode('UTF-8')))
         self.target_fields = ['deptype', 'deptarget']
 
     def process_sentence(self, sen, field_names):
@@ -40,7 +64,7 @@ class EmDepPy:
 
     def parse_sentence(self, lines):
         # Create a sentence class
-        sentence_data = autoclass('is2.data.SentenceData09')()
+        sentence_data = self._autoclass('is2.data.SentenceData09')()
 
         # Init Arrays for the text
         forms = [self._jstr(b'<root>')]
