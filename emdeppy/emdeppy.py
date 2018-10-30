@@ -43,13 +43,22 @@ def import_pyjnius(class_path):
 class EmDepPy:
     class_path = os.path.join(os.path.dirname(__file__), 'anna-3.61.jar')
 
-    def __init__(self, model_file='szk.mate.model'):
+    def __init__(self, model_file='szk.mate.model', source_fields=None, target_fields=None):
         self._autoclass = import_pyjnius(EmDepPy.class_path)
         self._jstr = self._autoclass('java.lang.String')
         if not os.path.isabs(model_file):
             model_file = os.path.normpath(os.path.join(os.path.dirname(__file__), model_file))
         self._parser = self._autoclass('is2.parser.Parser')(self._jstr(model_file.encode('UTF-8')))
-        self.target_fields = ['deptype', 'deptarget']
+
+        # Field names for e-magyar TSV
+        if source_fields is None:
+            source_fields = {}
+
+        if target_fields is None:
+            target_fields = []
+
+        self.source_fields = source_fields
+        self.target_fields = target_fields
 
     def process_sentence(self, sen, field_names):
         out = self.parse_sentence('\t'.join((tok[field_names[0]], tok[field_names[1]], tok[field_names[2]],
