@@ -1,1 +1,2 @@
-emdeppy/szk.mate.model filter=lfs diff=lfs merge=lfs -text
+emdeppy/szk.mate.conll.model filter=lfs diff=lfs merge=lfs -text
+emdeppy/szk.mate.ud.model filter=lfs diff=lfs merge=lfs -text
