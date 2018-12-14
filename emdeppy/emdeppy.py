@@ -4,13 +4,15 @@
 import os
 from itertools import count
 
+import jnius_config
 
-def import_pyjnius(class_path):
+
+def import_pyjnius():
     """
     PyJNIus can only be imported once per Python interpreter and one must set the classpath before importing...
     """
     # Check if autoclass is already imported...
-    if 'autoclass' not in locals() and 'autoclass' not in globals():
+    if not jnius_config.vm_running:
 
         # Tested on Ubuntu 16.04 64bit with openjdk-8 JDK and JRE installed:
         # sudo apt install openjdk-8-jdk-headless openjdk-8-jre-headless
@@ -20,8 +22,6 @@ def import_pyjnius(class_path):
             os.environ['JAVA_HOME']
         except KeyError:
             os.environ['JAVA_HOME'] = '/usr/lib/jvm/java-8-openjdk-amd64/'
-
-        os.environ['CLASSPATH'] = ':'.join((class_path, os.environ.get('CLASSPATH', ''))).rstrip(':')
 
         # Set path and import jnius for this session
         from jnius import autoclass
@@ -34,7 +34,8 @@ def import_pyjnius(class_path):
         urls = ucl.getURLs()
         cp = ':'.join(url.getFile() for url in urls)
 
-        print('Warning: PyJNIus is already imported with the following classpath: {0}'.format(cp), file=sys.stderr)
+        print('Warning: PyJNIus is already imported with the following classpath: {0} Please check if it is ok!'.
+              format(cp), file=sys.stderr)
 
     # Return autoclass for later use...
     return autoclass
@@ -45,7 +46,9 @@ class EmDepPy:
 
     def __init__(self, model_file=os.path.normpath(os.path.join(os.path.dirname(__file__), 'szk.mate.conll.model')),
                  source_fields=None, target_fields=None):
-        self._autoclass = import_pyjnius(EmDepPy.class_path)
+        if not jnius_config.vm_running:
+            jnius_config.add_classpath(EmDepPy.class_path)
+            self._autoclass = import_pyjnius()
         self._jstr = self._autoclass('java.lang.String')
         self._parser = self._autoclass('is2.parser.Parser')(self._jstr(model_file.encode('UTF-8')))
 
