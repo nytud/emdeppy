@@ -74,7 +74,7 @@ class EmDepPy:
 
     @staticmethod
     def prepare_fields(field_names):
-        return [field_names['string'], field_names['lemma'], field_names['pos'], field_names['feature']]
+        return [field_names['form'], field_names['lemma'], field_names['upostag'], field_names['feats']]
 
     def parse_sentence(self, lines):
         # Create a sentence class
