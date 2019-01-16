@@ -45,7 +45,8 @@ def import_pyjnius():
 
 
 class EmDepPy:
-    class_path = os.path.join(os.path.dirname(__file__), 'anna-3.61.jar')
+    class_path = ':'.join((os.path.join(os.path.dirname(__file__), jar)
+                           for jar in ('anna-3.61.jar', 'NullPrintStream.jar')))
 
     def __init__(self, model_file=os.path.normpath(os.path.join(os.path.dirname(__file__), 'szk.mate.conll.model')),
                  source_fields=None, target_fields=None):
@@ -53,6 +54,10 @@ class EmDepPy:
             jnius_config.add_classpath(EmDepPy.class_path)
         self._autoclass = import_pyjnius()
         self._jstr = self._autoclass('java.lang.String')
+        system = self._autoclass('java.lang.System')
+        null_print_stream = self._autoclass('NullPrintStream')
+        system.setOut(null_print_stream)  # Shut up JAVA!
+        system.setErr(null_print_stream)
         self._parser = self._autoclass('is2.parser.Parser')(self._jstr(model_file.encode('UTF-8')))
 
         # Field names for e-magyar TSV
