@@ -71,8 +71,8 @@ class EmDepPy:
         self.target_fields = target_fields
 
     def process_sentence(self, sen, field_names):
-        out = self.parse_sentence('\t'.join((tok[field_names[0]], tok[field_names[1]], tok[field_names[2]],
-                                             tok[field_names[3]])) for tok in sen)
+        out = self.parse_sentence((tok[field_names[0]], tok[field_names[1]], tok[field_names[2]],
+                                  tok[field_names[3]]) for tok in sen)
         for tok, out_line in zip(sen, out):
             tok.extend([str(out_line[0]), out_line[6], str(out_line[5])])
         return sen
@@ -92,8 +92,7 @@ class EmDepPy:
         features = [self._jstr(b'<no-type>')]
 
         # Read the text from TSV style input
-        for line in lines:
-            curr_form, curr_lemma, curr_pos, curr_feats = line.strip().split()
+        for curr_form, curr_lemma, curr_pos, curr_feats in lines:
             forms.append(self._jstr(curr_form.encode('UTF-8')))
             lemmas.append(self._jstr(curr_lemma.encode('UTF-8')))
             poss.append(self._jstr(curr_pos.encode('UTF-8')))
@@ -114,14 +113,14 @@ class EmDepPy:
     def parse_stream(self, stream):
         lines = []
         for line in stream:
-            line = line.strip()
-            if len(line) == 0:
+            fields = line.strip().split('\t')
+            if len(fields) == 0:
                 for n, f, lemm, p, f, h, labels in self.parse_sentence(lines):
                     yield '{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n'.format(n, f, lemm, p, f, h, labels).encode('UTF-8')
                 yield b'\n'
                 lines = []
             else:
-                lines.append(line)
+                lines.append(fields)
         if len(lines) > 0:
             for n, f, lemm, p, f, h, labels in self.parse_sentence(lines):
                 yield '{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n'.format(n, f, lemm, p, f, h, labels).encode('UTF-8')
