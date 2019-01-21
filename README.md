@@ -32,7 +32,7 @@ A wrapper and REST API implemented in Python for __emDep__ (Bohnet parser a.k.a.
          'sétálni sétál V SubPOS=m|Mood=i|Tense=s|Per=none|Num=p|Def=n\n' \
          '. . . _'
 >>> sentence = ex.split('\n')  # Like reading a file with open()
->>> print(list(p.parse_sentence(sentence)))
+>>> print(list(p.parse_sentence((t.split('\t') for t in sentence))))
 ...
 >>> p.parse_stream(ex)  # Same as parse_sentence, but sentences are separated with empty lines (like CoNLL-* fomrat)
 ...
