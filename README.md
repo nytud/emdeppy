@@ -2,6 +2,8 @@
 # emDepPy
 A wrapper and REST API implemented in Python for __emDep__ (Bohnet parser a.k.a. Mate Tools).
 
+__WARNING__: This module is not thread-safe! [One can not load multiple models simultaneously!](https://code.google.com/archive/p/mate-tools/issues/2)
+
 ## Requirements
 
   - _(Included in this repository)_ [Mate Tools parser](http://www.ims.uni-stuttgart.de/forschung/ressourcen/werkzeuge/matetools.en.html) compiled (stripped from [Magyarlánc 3.0](https://github.com/antaljanosbenjamin/magyarlanc/tree/b558823b2d1f9cdc0b5c0ad93b628e96fe251cc1))

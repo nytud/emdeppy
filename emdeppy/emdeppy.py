@@ -47,6 +47,7 @@ def import_pyjnius():
 class EmDepPy:
     class_path = ':'.join((os.path.join(os.path.dirname(__file__), jar)
                            for jar in ('anna-3.61.jar', 'NullPrintStream.jar')))
+    pass_header = True
 
     def __init__(self, model_file=os.path.normpath(os.path.join(os.path.dirname(__file__), 'szk.mate.conll.model')),
                  source_fields=None, target_fields=None):
