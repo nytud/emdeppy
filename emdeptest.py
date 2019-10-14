@@ -2,7 +2,7 @@
 
 import emdeppy.emdeppy as emdep 
 # load Szeged Korpusz model
-p = emdep.EmDepPy('szk.mate.model')
+p = emdep.EmDepPy('szk.mate.ud.model')
 
 # example sentence, wsp-separated fields: wordform, lemma, pos, feature
 ex = 'A a Det SubPOS=f\n' \

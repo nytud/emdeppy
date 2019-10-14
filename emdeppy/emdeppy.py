@@ -49,7 +49,7 @@ class EmDepPy:
                            for jar in ('anna-3.61.jar', 'NullPrintStream.jar')))
     pass_header = True
 
-    def __init__(self, model_file=os.path.normpath(os.path.join(os.path.dirname(__file__), 'szk.mate.conll.model')),
+    def __init__(self, model_file=os.path.normpath(os.path.join(os.path.dirname(__file__), 'szk.mate.ud.model')),
                  source_fields=None, target_fields=None):
         if not jnius_config.vm_running:
             jnius_config.add_classpath(EmDepPy.class_path)
