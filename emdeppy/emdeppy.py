@@ -51,8 +51,6 @@ class EmDepPy:
 
     def __init__(self, model_file=os.path.normpath(os.path.join(os.path.dirname(__file__), 'szk.mate.ud.model')),
                  source_fields=None, target_fields=None):
-        if not jnius_config.vm_running:
-            jnius_config.add_classpath(EmDepPy.class_path)
         self._autoclass = import_pyjnius()
         self._jstr = self._autoclass('java.lang.String')
         system = self._autoclass('java.lang.System')
@@ -126,6 +124,9 @@ class EmDepPy:
             for n, f, lemm, p, f, h, labels in self.parse_sentence(lines):
                 yield '{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n'.format(n, f, lemm, p, f, h, labels).encode('UTF-8')
 
+
+if not jnius_config.vm_running:
+    jnius_config.add_classpath(EmDepPy.class_path)
 
 if __name__ == '__main__':
     dep_parser = EmDepPy()
