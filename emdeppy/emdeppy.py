@@ -129,13 +129,24 @@ if not jnius_config.vm_running:
     jnius_config.add_classpath(EmDepPy.class_path)
 
 if __name__ == '__main__':
-    dep_parser = EmDepPy()
+    """
+    # Old model
+    dep_parser = EmDepPy(model_file=os.path.normpath(os.path.join(os.path.dirname(__file__), 'szk.mate.conll.model')))
 
     ex = 'A a Det SubPOS=f\n' \
          'kutya kutya N SubPOS=c|Num=s|Cas=n|NumP=none|PerP=none|NumPd=none\n' \
          'elment elmegy V SubPOS=m|Mood=i|Tense=s|Per=3|Num=s|Def=n\n' \
          'sétálni sétál V SubPOS=m|Mood=i|Tense=s|Per=none|Num=p|Def=n\n' \
          '. . . _'
+    """
 
-    for i, form, lemma, pos, feat, head, label in dep_parser.parse_sentence(ex.split('\n')):
+    dep_parser = EmDepPy()
+
+    ex = 'A a DET Definite=Def|PronType=Art\n' \
+         'kutya kutya NOUN Case=Nom|Number=Sing\n' \
+         'elment el+megy VERB Definite=Ind|Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin|Voice=Act\n' \
+         'sétálni sétál VERB VerbForm=Inf|Voice=Act\n' \
+         '. . PUNCT _'
+
+    for i, form, lemma, pos, feat, head, label in dep_parser.parse_sentence(line.split(' ') for line in ex.split('\n')):
         print(i, form, lemma, pos, feat, head, label, sep='\t')
