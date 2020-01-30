@@ -2,46 +2,9 @@
 # -*- coding: utf-8, vim: expandtab:ts=4 -*-
 
 import os
-from itertools import count
+from itertools import count, repeat
 
-import jnius_config
-
-
-def import_pyjnius():
-    """
-    PyJNIus can only be imported once per Python interpreter and one must set the classpath before importing...
-    """
-    # Check if autoclass is already imported...
-    if not jnius_config.vm_running:
-
-        # Tested on Ubuntu 16.04 64bit with openjdk-8 JDK and JRE installed:
-        # sudo apt install openjdk-8-jdk-headless openjdk-8-jre-headless
-
-        # Set JAVA_HOME for this session
-        try:
-            os.environ['JAVA_HOME']
-        except KeyError:
-            os.environ['JAVA_HOME'] = '/usr/lib/jvm/java-8-openjdk-amd64/'
-
-        # Set path and import jnius for this session
-        from jnius import autoclass
-    elif hasattr(jnius_config, 'classpath_show_warning') and not jnius_config.classpath_show_warning:
-        from jnius import autoclass  # Warning already had shown. It is enough to show it only once!
-    else:
-        import sys
-        from jnius import cast, autoclass
-        class_loader = autoclass('java.lang.ClassLoader')
-        cl = class_loader.getSystemClassLoader()
-        ucl = cast('java.net.URLClassLoader', cl)
-        urls = ucl.getURLs()
-        cp = ':'.join(url.getFile() for url in urls)
-
-        jnius_config.classpath_show_warning = False
-        print('Warning: PyJNIus is already imported with the following classpath: {0} Please check if it is ok!'.
-              format(cp), file=sys.stderr)
-
-    # Return autoclass for later use...
-    return autoclass
+from xtsv import jnius_config, import_pyjnius
 
 
 class EmDepPy:
@@ -50,7 +13,7 @@ class EmDepPy:
     pass_header = True
 
     def __init__(self, model_file=os.path.normpath(os.path.join(os.path.dirname(__file__), 'szk.mate.ud.model')),
-                 source_fields=None, target_fields=None):
+                 maxlen=None, source_fields=None, target_fields=None):
         self._autoclass = import_pyjnius()
         self._jstr = self._autoclass('java.lang.String')
         system = self._autoclass('java.lang.System')
@@ -58,6 +21,12 @@ class EmDepPy:
         system.setOut(null_print_stream)  # Shut up JAVA!
         system.setErr(null_print_stream)
         self._parser = self._autoclass('is2.parser.Parser')(self._jstr(model_file.encode('UTF-8')))
+
+        self._maxlen = maxlen
+        if self._maxlen is not None:
+            self._parse_sentence = self._parse_sentence_w_maxlen
+        else:
+            self._parse_sentence = self._parse_sentence_unlimited
 
         # Field names for e-magyar TSV
         if source_fields is None:
@@ -70,8 +39,8 @@ class EmDepPy:
         self.target_fields = target_fields
 
     def process_sentence(self, sen, field_names):
-        out = self.parse_sentence((tok[field_names[0]], tok[field_names[1]], tok[field_names[2]],
-                                  tok[field_names[3]]) for tok in sen)
+        out = self._parse_sentence(((tok[field_names[0]], tok[field_names[1]], tok[field_names[2]],
+                                   tok[field_names[3]]) for tok in sen), len(sen))
         for tok, out_line in zip(sen, out):
             tok.extend([str(out_line[0]), out_line[6], str(out_line[5])])
         return sen
@@ -80,7 +49,12 @@ class EmDepPy:
     def prepare_fields(field_names):
         return [field_names['form'], field_names['lemma'], field_names['upostag'], field_names['feats']]
 
-    def parse_sentence(self, lines):
+    def _parse_sentence_w_maxlen(self, sen, sen_len):
+        if sen_len > self._maxlen:
+            return repeat(('_', '_', '_', '_', '_', '_', '_'))
+        return self._parse_sentence_unlimited(sen, sen_len)
+
+    def _parse_sentence_unlimited(self, lines, _):
         # Create a sentence class
         sentence_data = self._autoclass('is2.data.SentenceData09')()
 
@@ -109,44 +83,6 @@ class EmDepPy:
         # Return output as an iterator over tokens...
         return zip(count(start=1), out.forms, out.plemmas, out.ppos, out.pfeats, out.pheads, out.plabels)
 
-    def parse_stream(self, stream):
-        lines = []
-        for line in stream:
-            fields = line.strip().split('\t')
-            if len(fields) == 0:
-                for n, f, lemm, p, f, h, labels in self.parse_sentence(lines):
-                    yield '{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n'.format(n, f, lemm, p, f, h, labels).encode('UTF-8')
-                yield b'\n'
-                lines = []
-            else:
-                lines.append(fields)
-        if len(lines) > 0:
-            for n, f, lemm, p, f, h, labels in self.parse_sentence(lines):
-                yield '{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n'.format(n, f, lemm, p, f, h, labels).encode('UTF-8')
-
 
 if not jnius_config.vm_running:
     jnius_config.add_classpath(EmDepPy.class_path)
-
-if __name__ == '__main__':
-    """
-    # Old model
-    dep_parser = EmDepPy(model_file=os.path.normpath(os.path.join(os.path.dirname(__file__), 'szk.mate.conll.model')))
-
-    ex = 'A a Det SubPOS=f\n' \
-         'kutya kutya N SubPOS=c|Num=s|Cas=n|NumP=none|PerP=none|NumPd=none\n' \
-         'elment elmegy V SubPOS=m|Mood=i|Tense=s|Per=3|Num=s|Def=n\n' \
-         'sétálni sétál V SubPOS=m|Mood=i|Tense=s|Per=none|Num=p|Def=n\n' \
-         '. . . _'
-    """
-
-    dep_parser = EmDepPy()
-
-    ex = 'A a DET Definite=Def|PronType=Art\n' \
-         'kutya kutya NOUN Case=Nom|Number=Sing\n' \
-         'elment el+megy VERB Definite=Ind|Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin|Voice=Act\n' \
-         'sétálni sétál VERB VerbForm=Inf|Voice=Act\n' \
-         '. . PUNCT _'
-
-    for i, form, lemma, pos, feat, head, label in dep_parser.parse_sentence(line.split(' ') for line in ex.split('\n')):
-        print(i, form, lemma, pos, feat, head, label, sep='\t')

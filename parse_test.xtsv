@@ -1,0 +1,6 @@
+form	lemma	upostag	feats
+A	a	DET	Definite=Def|PronType=Art
+kutya	kutya	NOUN	Case=Nom|Number=Sing
+elment	el+megy	VERB	Definite=Ind|Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin|Voice=Act
+sétálni	sétál	VERB	VerbForm=Inf|Voice=Act
+.	.	PUNCT	_
