@@ -25,30 +25,11 @@ __WARNING__: This module is not thread-safe! [One can not load multiple models s
 
 ## Usage
 
-```python
->>> import emdeppy.emdeppy as emdep
->>> p = emdep.EmDepPy('szk.mate.model')
->>> ex = 'A a Det SubPOS=f\n' \
-         'kutya kutya N SubPOS=c|Num=s|Cas=n|NumP=none|PerP=none|NumPd=none\n' \
-         'elment elmegy V SubPOS=m|Mood=i|Tense=s|Per=3|Num=s|Def=n\n' \
-         'sétálni sétál V SubPOS=m|Mood=i|Tense=s|Per=none|Num=p|Def=n\n' \
-         '. . . _'
->>> sentence = ex.split('\n')  # Like reading a file with open()
->>> print(list(p.parse_sentence((t.split('\t') for t in sentence))))
-...
->>> p.parse_stream(ex)  # Same as parse_sentence, but sentences are separated with empty lines (like CoNLL-* fomrat)
-...
-```
+It is recommended to use the program as the part of [_e-magyar_ language processing framework](https://github.com/dlt-rilmta/emtsv).
 
-`szk.mate.model` is the previously trained model file (eg. from Szeged Korpusz).
+If all columns are already exists one can use `emdeptest.py` with the unified [xtsv CLI API](https://github.com/dlt-rilmta/xtsv#command-line-interface).
 
-`parse_sentence` takes one sentence as a list of tokens,
-a token is a wsp-separated list of 4 fields:
-string, lemma, pos, feature.
-It returns an iterator by tokens with 7 fields:
-id, string, lemma, pos, feature, depTarget, depType.
-
-`parse_stream` Parses multiple sentences which are separated with newlines like in the CoNLL-* formats (uses `parse_sentence` internally)
+When `--maxlen [n: Int > 0]` is supplied only sentences with at least n tokens are parsed longer ones get `_` for all fields.
 
 ## License
 
