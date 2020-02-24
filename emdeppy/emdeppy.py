@@ -8,8 +8,7 @@ from xtsv import jnius_config, import_pyjnius
 
 
 class EmDepPy:
-    class_path = ':'.join((os.path.join(os.path.dirname(__file__), jar)
-                           for jar in ('anna-3.61.jar', 'NullPrintStream.jar')))
+    class_path = os.path.join(os.path.dirname(__file__), 'anna-3.61.jar')
     pass_header = True
 
     def __init__(self, model_file=os.path.normpath(os.path.join(os.path.dirname(__file__), 'szk.mate.ud.model')),
@@ -17,10 +16,15 @@ class EmDepPy:
         self._autoclass = import_pyjnius()
         self._jstr = self._autoclass('java.lang.String')
         system = self._autoclass('java.lang.System')
-        null_print_stream = self._autoclass('NullPrintStream')
-        system.setOut(null_print_stream)  # Shut up JAVA!
-        system.setErr(null_print_stream)
+        print_stream = self._autoclass('java.io.PrintStream')
+        output_stream = self._autoclass('java.io.OutputStream')
+        orig_out = system.out
+        orig_err = system.err
+        system.setOut(print_stream(output_stream.nullOutputStream()))  # Shut up JAVA!
+        system.setErr(print_stream(output_stream.nullOutputStream()))  # Shut up JAVA!
         self._parser = self._autoclass('is2.parser.Parser')(self._jstr(model_file.encode('UTF-8')))
+        system.setOut(orig_out)  # Restore handles...
+        system.setErr(orig_err)  # Restore handles...
 
         self._maxlen = maxlen
         if self._maxlen is not None:

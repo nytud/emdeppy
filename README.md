@@ -3,6 +3,7 @@
 A wrapper and REST API implemented in Python for __emDep__ (Bohnet parser a.k.a. Mate Tools).
 
 __WARNING__: This module is not thread-safe! [One can not load multiple models simultaneously!](https://code.google.com/archive/p/mate-tools/issues/2)
+__WARNING__: This wrapper is only compatible with [JAVA 11](https://askubuntu.com/questions/1037646/why-is-openjdk-10-packaged-as-openjdk-11/1037655#1037655) or higher!
 
 ## Requirements
 
@@ -19,7 +20,7 @@ __WARNING__: This module is not thread-safe! [One can not load multiple models s
   - `git-lfs install` 
   - Clone the repository: `git clone https://github.com/dlt-rilmta/emdeppy` (It should clone the model file also!)
   - ``sudo apt install `cat Aptfile` ``
-  - `sudo pip3 install Cython`
+  - `sudo pip3 install cython`
   - `sudo pip3 install -r requirements.txt`
   - Use from Python
 
