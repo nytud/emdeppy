@@ -3,6 +3,7 @@
 A wrapper and REST API implemented in Python for __emDep__ (Bohnet parser a.k.a. Mate Tools).
 
 __WARNING__: This module is not thread-safe! [One can not load multiple models simultaneously!](https://code.google.com/archive/p/mate-tools/issues/2)
+
 __WARNING__: This wrapper is only compatible with [JAVA 11](https://askubuntu.com/questions/1037646/why-is-openjdk-10-packaged-as-openjdk-11/1037655#1037655) or higher!
 
 ## Requirements
@@ -28,7 +29,7 @@ __WARNING__: This wrapper is only compatible with [JAVA 11](https://askubuntu.co
 
 It is recommended to use the program as the part of [_e-magyar_ language processing framework](https://github.com/dlt-rilmta/emtsv).
 
-If all columns are already exists one can use `emdeptest.py` with the unified [xtsv CLI API](https://github.com/dlt-rilmta/xtsv#command-line-interface).
+If all columns are already exists one can use `python3 -m emdeppy` with the unified [xtsv CLI API](https://github.com/dlt-rilmta/xtsv#command-line-interface).
 
 When `--maxlen [n: Int > 0]` is supplied only sentences with at least n tokens are parsed longer ones get `_` for all fields.
 

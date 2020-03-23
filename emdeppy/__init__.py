@@ -1,3 +1,7 @@
-from .emdeppy import EmDepPy
+#!/usr/bin/env pyhton3
+# -*- coding: utf-8, vim: expandtab:ts=4 -*-
 
-__all__ = ['EmDepPy']
+from .emdeppy import EmDepPy
+from .version import __version__
+
+__all__ = ['EmDepPy', __version__]

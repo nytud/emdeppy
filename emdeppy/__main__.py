@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env pyhton3
+# -*- coding: utf-8, vim: expandtab:ts=4 -*-
 
 from xtsv import build_pipeline, parser_skeleton, jnius_config
 
@@ -26,9 +27,9 @@ def main():
     # Init and run the module as it were in xtsv
 
     # The relevant part of config.py
-    em_depud = ('emdeppy.emdeppy', 'EmDepPy', 'emDep', (), {'maxlen': opts.maxlen,
-                                                            'source_fields': {'form', 'lemma', 'upostag', 'feats'},
-                                                            'target_fields': ['id', 'deprel', 'head']})
+    em_depud = ('emdeppy', 'EmDepPy', 'emDep', (), {'maxlen': opts.maxlen,
+                                                    'source_fields': {'form', 'lemma', 'upostag', 'feats'},
+                                                    'target_fields': ['id', 'deprel', 'head']})
     tools = [(em_depud, ('dep', 'emDep-ud'))]
 
     # Run the pipeline on input and write result to the output...
