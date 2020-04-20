@@ -1,0 +1,7 @@
+form	lemma	upostag	feats	id	deprel	head
+A	a	DET	Definite=Def|PronType=Art	1	DET	2
+kutya	kutya	NOUN	Case=Nom|Number=Sing	2	SUBJ	3
+elment	el+megy	VERB	Definite=Ind|Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin|Voice=Act	3	ROOT	0
+sétálni	sétál	VERB	VerbForm=Inf|Voice=Act	4	INF	3
+.	.	PUNCT	_	5	PUNCT	0
+
