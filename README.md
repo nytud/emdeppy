@@ -32,6 +32,15 @@ If all columns are already exists one can use `python3 -m emdeppy` with the unif
 
 When `--maxlen [n: Int > 0]` is supplied only sentences with at least n tokens are parsed longer ones get `_` for all fields.
 
+## Train
+
+The training is currently available from JAVA CLI only:
+
+1. `cat SzegedDep/*.conll-2009 | awk -F$'\t' -v OFS=$'\t' '{if ($0 != "") print $0,"_","_","_","_","_","_","_"; else print $0}{}' > train_corpus.txt`
+2. `empdejava -Xmx2G -classpath ./emdeppy/anna-3.61.jar is2.parser.Parser -model szk.mate.new.model -train train_corpus.txt`
+
+For more training parameters see the [documentation](https://code.google.com/archive/p/mate-tools/wikis/Training.wiki) or the [source code](https://code.google.com/archive/p/mate-tools/source/default/source).
+
 ## License
 
 This Python wrapper is licensed under the LGPL 3.0 license.
